@@ -1,0 +1,52 @@
+@page
+@model kona.Pages.Posts.DetailsModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Post</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-1"> Image </dt>
+        <dd class="col-sm-11"><img src="@Model.Post.Sample" style="width: 90%;"></dd>
+        <dt class="col-sm-1">
+            @Html.DisplayNameFor(model => model.Post.File)
+        </dt>
+        <dd class="col-sm-11">
+            <a href="@Model.Post.File">@Html.DisplayFor(model => model.Post.File)</a>
+        </dd>
+        <dt class="col-sm-1">
+            @Html.DisplayNameFor(model => model.Post.Source)
+        </dt>
+        <dd class="col-sm-11">
+            <a href="@Model.Post.Source">@Html.DisplayFor(model => model.Post.Source)</a>
+        </dd>
+        <dt class="col-sm-1">
+            @Html.DisplayNameFor(model => model.Post.Tags)
+        </dt>
+        <dd class="col-sm-11">
+            <dl class="row">
+                @foreach (var tag in Model.Tags)
+                {
+                    <dt class="col-sm-1">@tag.Item1.ToString()</dt>
+                    <dd class="col-sm-11">
+                        <ul>
+                            @foreach (var item in tag.Item2)
+                            {
+                                <li class="d-inline">@item.Name</li>
+                            }
+                        </ul>
+                    </dd>
+                }
+            </dl>
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-page="./Edit" asp-route-id="@Model.Post.ID">Edit</a> |
+    <a asp-page="./Index">Back to List</a>
+</div>

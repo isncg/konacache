@@ -1,0 +1,28 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">@SiteInfo.Title</h1>
+    <form method="get" action="/Posts/Search">
+        <input type="hidden" name="redirect" value="true"/>
+        <div class="row">
+            <div class="col-2"></div>
+          
+            <div class="col-8">
+                <input class="col-12 form-control" name="tags" placeholder="please input tags" />
+            </div>
+            <div class="col-2"></div>
+        </div>
+        <div style="min-height: 2em;"></div>
+        <div class="row">
+            <div class="col-5"></div>
+            <div class="col-2" style="min-width: 5em;">
+                <input class="col-12 btn btn-primary" type="submit" value="Search" />
+            </div>            
+            <div class="col-5"></div>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,10 @@
+@page
+@model kona.Pages.UpdatePostsModel
+@{
+    ViewData["Title"] = "Update";
+}
+
+<form method="post" enctype="multipart/form-data">
+    <input asp-for="files" type="file" multiple />
+    <input type="submit">
+</form>

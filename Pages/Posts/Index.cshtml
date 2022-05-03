@@ -1,0 +1,31 @@
+@page
+@model kona.Pages.Posts.IndexModel
+
+@{
+    ViewData["Title"] = "Posts";
+}
+
+<h1>Posts</h1>
+<form method="get" action="/Posts/Search">
+    <div class="row">
+        <div class="col-2" style="min-width: 5em;">
+            <input class="col-12 btn btn-primary" type="submit" value="Search" />
+        </div>
+        <div class="col-10">
+            <input class="col-12 form-control" name="tags" placeholder="please input tags" />
+        </div>
+    </div>
+</form>
+<div>
+    @foreach (var row in Model.PostGrid)
+    {
+        <div class="postrow">
+            @foreach (var post in row)
+            {
+                <a asp-page="./Details" asp-route-id="@post.ID">
+                    <img class="postlistimg" src="@post.Preview" />
+                </a>
+            }
+        </div>
+    }
+</div>

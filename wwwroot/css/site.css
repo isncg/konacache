@@ -1,0 +1,28 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.postlistimg {
+  width: 25%;
+  padding-right: 0.2%;
+}
+
+.postrow {
+  padding-top: 1rem;
+  font-size: 0px;
+}
