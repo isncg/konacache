@@ -27,6 +27,7 @@ public class SearchModel : PageModel
     //public IList<Post> Post { get; set; }
     public int ViewColumn { get; set; } = 4;
     public List<List<Post>> PostGrid { get; private set; }
+    public string downloads {get; private set;}
 
     public async Task<IActionResult> OnGetAsync()
     {
@@ -37,6 +38,7 @@ public class SearchModel : PageModel
         }
         List<Post> postList = new List<Post>();
         HashSet<int> ids = new HashSet<int>();
+        var tagDownloads = new List<DataUtils.TagDownload>();
         foreach (var tagName in tagNames)
         {
             var posts = await _context.PostRawTags.Where(pt => pt.RawTag.Name == tagName).Select(pt => pt.Post).ToListAsync();
@@ -47,6 +49,7 @@ public class SearchModel : PageModel
                 postList.Add(p);
                 ids.Add(p.ID);
             }
+            tagDownloads.Add(new DataUtils.TagDownload{tag = tagName});
         }
         postList.Sort((a, b) => b.ID - a.ID);
         PostGrid = new List<List<Post>>();
@@ -64,6 +67,7 @@ public class SearchModel : PageModel
         }
         if (null != row && row.Count > 0)
             PostGrid.Add(row);
+        downloads = string.Join('\n', tagDownloads.ConvertAll(e=>e.WGetCommand()));
         return Page();
     }
 }

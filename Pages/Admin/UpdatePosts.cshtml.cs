@@ -8,36 +8,26 @@ namespace kona.Pages;
 
 public class UpdatePostsModel : PageModel
 {
-    private readonly KonaContext _context;
+    private readonly PostUpdate _context;
 
-    public UpdatePostsModel(Kona.KonaContext context)
+    public UpdatePostsModel(Kona.PostUpdate context)
     {
         _context = context;
     }
     [BindProperty]
     public List<IFormFile> files { get; set; }
 
-
-    public async Task<IActionResult> OnPost()
+    public IActionResult OnPost()
     {
         if (null == files || files.Count == 0)
             return Page();
-
         foreach (var file in files)
         {
             try
             {
                 StreamReader reader = new StreamReader(file.OpenReadStream());
                 var json = reader.ReadToEnd();
-                var rawPosts = JsonConvert.DeserializeObject<List<DataUtils.post>>(json);
-                if (null != rawPosts)
-                {
-                    foreach (var p in rawPosts)
-                    {
-                        if (p.IsValid)
-                            await DataUtils.AddOrUpdatePost(p, _context);
-                    }
-                }
+                _context.Add(file.FileName, json);
             }
             catch (Exception e)
             {
@@ -46,13 +36,6 @@ public class UpdatePostsModel : PageModel
                 Console.WriteLine(e.InnerException);
             }
         }
-        return Redirect("/Posts");
+        return RedirectToPage("./UpdatePostsProgress");
     }
-}
-
-
-public class FileUpload
-{
-    public List<IFormFile> FormFiles { get; set; } // convert to list
-    public string SuccessMessage { get; set; }
 }

@@ -33,8 +33,7 @@ public static class DataUtils
                 return
                 !string.IsNullOrWhiteSpace(file_url) &&
                 !string.IsNullOrWhiteSpace(preview_url) &&
-                !string.IsNullOrWhiteSpace(sample_url) &&
-                !string.IsNullOrWhiteSpace(source);
+                !string.IsNullOrWhiteSpace(sample_url);
             }
         }
 
@@ -122,11 +121,21 @@ public static class DataUtils
         context.SaveChanges();
     }
 
-    public static async Task AddOrUpdatePost(post jsonPost, KonaContext context)
+    public static void AddOrUpdatePost(post jsonPost, KonaContext context)
     {
         var post = jsonPost.ToPost();
         var rawTagNames = (post.TagString?.Split(' ') ?? new string[0]).ToHashSet();
+        var curTags = context.PostTags.Where(e => e.PostID == post.ID);
+        foreach (var tag in curTags)
+            context.Entry(tag).State = EntityState.Deleted;
+        context.SaveChanges();
+        var curRawTags = context.PostRawTags.Where(e => e.PostID == post.ID);
+        foreach (var tag in curRawTags)
+            context.Entry(tag).State = EntityState.Deleted;
+        context.SaveChanges();
+        
         AddMissingRawTags(rawTagNames, context);
+
 
         foreach (var t in rawTagNames)
         {
@@ -147,7 +156,7 @@ public static class DataUtils
             context.Posts.Add(post);
         }
 
-        await context.SaveChangesAsync();
+        context.SaveChanges();
     }
 
 
@@ -167,5 +176,25 @@ public static class DataUtils
         //         AddOrUpdatePost(p, context);
         //     }
         // }
+    }
+
+    public class TagDownload
+    {
+        public string tag;
+        public virtual string ordertag=>"order:score";
+        public virtual string ordername=>"score";
+        public string GetURL(int page = 0)
+        {
+            return string.Format("https://konachan.net/post.json?tags={0}%20{1}&limit=100&page={2}", tag, ordertag, page);
+        }
+        public string GetName(int page = 0)
+        {
+            return string.Format("post_{0}_100_{1}_page_{2}.json", tag, ordername, page);
+        }
+
+        public string WGetCommand(int page = 0)
+        {
+            return string.Format("wget -O -c {0} \"{1}\" -–no-check-certificate", GetName(0), GetURL(0));
+        }
     }
 }

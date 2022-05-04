@@ -11,7 +11,7 @@
             <input class="col-12 btn btn-primary" type="submit" value="Search" />
         </div>
         <div class="col-10">
-            <input asp-for="tags" class="col-12 form-control" name="tags" placeholder="please input tags"/>
+            <input asp-for="tags" class="col-12 form-control" name="tags" placeholder="please input tags" />
         </div>
     </div>
 </form>
@@ -22,9 +22,16 @@
             @foreach (var post in row)
             {
                 <a asp-page="./Details" asp-route-id="@post.ID">
-                    <img class="postlistimg" src="@post.Preview" />
+                    <img class="postlistimg" src="@post.Preview" alt="@post.ID.ToString()" />
                 </a>
             }
         </div>
     }
+</div>
+
+<div>
+<b>More</b>
+<pre><code>
+@Model.downloads
+</code></pre>
 </div>

@@ -1,0 +1,26 @@
+@page
+@model kona.Pages.UpdatePostsProressModel
+@{
+    ViewData["Title"] = "Update";
+}
+
+<table class="table">
+    <tr>
+        <th>File</th>
+        <th>Progress</th>
+        <th>Status</th>
+        <th>Message</th>
+    </tr>
+    @if (null != Model.updateItems)
+    {
+        @foreach (var item in Model.updateItems)
+        {
+            <tr>
+                <td>@item.name</td>
+                <td>@item.GetProgressStr()</td>
+                <td>@item.state.ToString()</td>
+                <td>@item.message</td>
+            </tr>
+        }
+    }
+</table>

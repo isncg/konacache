@@ -23,7 +23,7 @@
             @foreach (var post in row)
             {
                 <a asp-page="./Details" asp-route-id="@post.ID">
-                    <img class="postlistimg" src="@post.Preview" />
+                    <img class="postlistimg" src="@post.Preview" alt="@post.ID.ToString()"/>
                 </a>
             }
         </div>
