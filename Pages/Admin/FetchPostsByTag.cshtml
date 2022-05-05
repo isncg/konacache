@@ -9,12 +9,19 @@
 {
     <form method="get">
         <input type="text" asp-for="@Model.tags" />
+        <input type="number" asp-for="@Model.page" min="1" max="100000000" value="1"/>
         <input type="submit" value="Fetch" />
+    </form>
+
+    <form method="get">
+        <input type="text" asp-for="@Model.tags" hidden value="order:date"/>
+        <input type="number" asp-for="@Model.page" value="1"/>
+        <input type="submit" value="Fetch Latest" />
     </form>
 }
 else
 {
-    <h2>Fetch posts with tag '@Model.tags'</h2>
+    <h2>Fetch posts with tag '@Model.tags' at page @Model.page</h2>
 }
 
 @if (Model.fetchSuccess)

@@ -9,6 +9,8 @@ public class FetchPostsByTag : PageModel
 {
     [BindProperty(SupportsGet = true)]
     public string tags { get; set; }
+    [BindProperty(SupportsGet = true)]
+    public int page { get; set; }
     public string result { get; set; }
     public string resultFormatted { get; set; }
     public string error { get; set; }
@@ -36,7 +38,7 @@ public class FetchPostsByTag : PageModel
         {
             try
             {
-                var response = httpClient.GetAsync("https://konachan.net/post.json?tags=" + tags);
+                var response = httpClient.GetAsync("https://konachan.net/post.json?limit=100&tags=" + tags);
                 result = await response.Result.Content.ReadAsStringAsync();
                 resultFormatted = FormatJson(result);
                 fetchSuccess = true;
