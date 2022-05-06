@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Kona;
 
 namespace kona.Pages.Posts
@@ -13,21 +14,27 @@ namespace kona.Pages.Posts
     public class IndexModel : PageModel
     {
         private readonly Kona.KonaContext _context;
+        private readonly IConfiguration _configuration;
 
-        public IndexModel(Kona.KonaContext context)
+        public IndexModel(Kona.KonaContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
-        public IList<Post> Post { get; set; }
+        //public IList<Post> Post { get; set; }
         public int ViewColumn { get; set; } = 4;
         public List<List<Post>> PostGrid { get; private set; }
 
-        public async Task OnGetAsync()
+        public PaginatedList<Post> Posts { get; set; }
+
+        public async Task OnGetAsync(int? pageIndex)
         {
-            Post = await _context.Posts.Select(p => p).Where(p => p.Rating == PostRating.S).OrderByDescending(p=>p.ID).ToListAsync();
+            var pageSize = _configuration.GetValue<int>("PostsPerPage", 20);
+            Posts = await PaginatedList<Post>.CreateAsync(_context.Posts.Select(p => p).Where(p => p.Rating == PostRating.S).OrderByDescending(p => p.ID), pageIndex ?? 1, pageSize: pageSize);
+            // Post = await _context.Posts.Select(p => p).Where(p => p.Rating == PostRating.S).OrderByDescending(p=>p.ID).ToListAsync();
             PostGrid = new List<List<Post>>();
-            int count = Post.Count;
+            int count = Posts.Count;
             List<Post> row = null;
             for (int i = 0; i < count; i++)
             {
@@ -37,7 +44,7 @@ namespace kona.Pages.Posts
                         PostGrid.Add(row);
                     row = new List<Post>();
                 }
-                row.Add(Post[i]);
+                row.Add(Posts[i]);
             }
             if (null != row && row.Count > 0)
                 PostGrid.Add(row);
