@@ -29,9 +29,20 @@
     }
 </div>
 
-<div>
-<b>More</b>
-<pre><code>
-@Model.downloads
-</code></pre>
-</div>
+@{
+    var prevDisabled = !Model.Posts.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.Posts.HasNextPage ? "disabled" : "";
+}
+
+<a asp-page="./Index"
+   asp-route-pageIndex="@(Model.Posts.PageIndex - 1)"
+   asp-route-tags="@(Model.tags)"
+   class="btn btn-primary @prevDisabled">
+    Previous
+</a>
+<a asp-page="./Index"
+   asp-route-pageIndex="@(Model.Posts.PageIndex + 1)"
+   asp-route-tags="@(Model.tags)"
+   class="btn btn-primary @nextDisabled">
+    Next
+</a>

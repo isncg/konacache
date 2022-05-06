@@ -14,10 +14,12 @@ namespace kona.Pages.Posts;
 public class SearchModel : PageModel
 {
     private readonly Kona.KonaContext _context;
+    private readonly IConfiguration _configuration;
 
-    public SearchModel(Kona.KonaContext context)
+    public SearchModel(Kona.KonaContext context, IConfiguration configuration)
     {
         _context = context;
+        _configuration = configuration;
     }
     [BindProperty(SupportsGet = true)]
     public String tags { get; set; }
@@ -27,47 +29,55 @@ public class SearchModel : PageModel
     //public IList<Post> Post { get; set; }
     public int ViewColumn { get; set; } = 4;
     public List<List<Post>> PostGrid { get; private set; }
-    public string downloads {get; private set;}
 
-    public async Task<IActionResult> OnGetAsync()
+    public PaginatedList<Post> Posts { get; set; }
+    public string downloads { get; private set; }
+
+    public async Task<IActionResult> OnGetAsync(int? pageIndex)
     {
         var tagNames = tags?.Split(' ') ?? new string[] { };
+        var pageSize = _configuration.GetValue<int>("PostsPerPage", 20);
         if (tagNames.Length == 0 && redirect)
         {
             return Redirect("/Posts");
         }
-        List<Post> postList = new List<Post>();
-        HashSet<int> ids = new HashSet<int>();
-        var tagDownloads = new List<DataUtils.TagDownload>();
-        foreach (var tagName in tagNames)
+        HashSet<int> rawTagIDs = new HashSet<int>();
+        foreach (var name in tagNames)
         {
-            var posts = await _context.PostRawTags.Where(pt => pt.RawTag.Name == tagName).Select(pt => pt.Post).ToListAsync();
-            foreach (var p in posts)
-            {
-                if (ids.Contains(p.ID) || p.Rating != PostRating.S)
-                    continue;
-                postList.Add(p);
-                ids.Add(p.ID);
-            }
-            tagDownloads.Add(new DataUtils.TagDownload{tag = tagName});
+            var rawTag = _context.RawTags.Where(e => e.Name == name).FirstOrDefault();
+            if (null != rawTag)
+                rawTagIDs.Add(rawTag.ID);
         }
-        postList.Sort((a, b) => b.ID - a.ID);
-        PostGrid = new List<List<Post>>();
-        int count = postList.Count;
-        List<Post> row = null;
-        for (int i = 0; i < count; i++)
+        IQueryable<Post> joinedResult;
+        List<IQueryable<Post>> queryableList = new List<IQueryable<Post>>();
+        foreach (var rtid in rawTagIDs)
         {
-            if (i % 4 == 0)
-            {
-                if (row != null)
-                    PostGrid.Add(row);
-                row = new List<Post>();
-            }
-            row.Add(postList[i]);
+            queryableList.Add(_context.PostRawTags.Where(e => e.RawTagID == rtid && e.Post.Rating == PostRating.S).Select(e => e.Post));
         }
-        if (null != row && row.Count > 0)
-            PostGrid.Add(row);
-        downloads = string.Join('\n', tagDownloads.ConvertAll(e=>e.WGetCommand()));
+        if (queryableList.Count > 0)
+        {
+            joinedResult = queryableList[0];
+            for (int i = 1; i < queryableList.Count; i++)
+            {
+                joinedResult = Queryable.Join(joinedResult, queryableList[i], e => e.ID, e => e.ID, (o, i) => o);
+            }
+            Posts = await PaginatedList<Post>.CreateAsync(joinedResult, pageIndex ?? 1, pageSize: pageSize);
+            PostGrid = new List<List<Post>>();
+            int count = Posts.Count;
+            List<Post> row = null;
+            for (int i = 0; i < count; i++)
+            {
+                if (i % 4 == 0)
+                {
+                    if (row != null)
+                        PostGrid.Add(row);
+                    row = new List<Post>();
+                }
+                row.Add(Posts[i]);
+            }
+            if (null != row && row.Count > 0)
+                PostGrid.Add(row);
+        }
         return Page();
     }
 }
