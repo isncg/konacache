@@ -20,7 +20,23 @@ public class FetchPostsByTag : PageModel
     public string submitMessage { get; set; }
     [BindProperty]
     public string postContent { get; set; }
-    private static readonly HttpClient httpClient = new HttpClient();
+    static HttpClient _httpClient = null;
+    private HttpClient httpClient
+    {
+        get
+        {
+            if (null == _httpClient)
+            {
+                var httpClientHandler = new HttpClientHandler
+                {
+                    SslProtocols = System.Security.Authentication.SslProtocols.Tls
+                };
+                _httpClient = new HttpClient(httpClientHandler);
+                _httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)");
+            }
+            return _httpClient;
+        }
+    }
 
     private PostUpdate postUpdate;
     public FetchPostsByTag(PostUpdate postUpdate)
