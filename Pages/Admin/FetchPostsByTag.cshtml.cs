@@ -43,11 +43,7 @@ public class FetchPostsByTag : PageModel
     {
         this.postUpdate = postUpdate;
     }
-    private static string FormatJson(string json)
-    {
-        dynamic parsedJson = JsonConvert.DeserializeObject(json);
-        return JsonConvert.SerializeObject(parsedJson, Formatting.Indented);
-    }
+
     public async Task<IActionResult> OnGetAsync()
     {
         if (!string.IsNullOrWhiteSpace(tags))
@@ -56,7 +52,7 @@ public class FetchPostsByTag : PageModel
             {
                 var response = httpClient.GetAsync("https://konachan.net/post.json?limit=100&tags=" + tags);
                 result = await response.Result.Content.ReadAsStringAsync();
-                resultFormatted = FormatJson(result);
+                resultFormatted = DataUtils.FormatJson(result);
                 fetchSuccess = true;
             }
             catch (Exception e)

@@ -1,0 +1,33 @@
+@page
+@model kona.Pages.FetchTags
+@{
+    ViewData["Title"] = "Update";
+}
+
+
+@if (string.IsNullOrWhiteSpace(Model.tag))
+{
+    <form method="get">
+        <input type="text" asp-for="@Model.tag" />
+        <input type="text" asp-for="@Model.source" hidden value="form"/>
+        <input type="submit" value="Fetch" />
+    </form>
+}
+else
+{
+    <h2>Fetch tag '@Model.tag'</h2>
+}
+
+@if (Model.fetchSuccess)
+{
+    <form method="post">
+        <input asp-for="@Model.submitMessage" value="" placeholder="submit message" />
+        <input asp-for="@Model.submitContent" value="@Model.result" hidden />
+        <input type="submit" />
+    </form>
+    <pre><code>@Model.resultFormatted</code></pre>
+}
+else
+{
+    <pre><code>@Model.error</code></pre>
+}

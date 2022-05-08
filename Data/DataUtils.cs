@@ -197,4 +197,10 @@ public static class DataUtils
             return string.Format("wget -O -c {0} \"{1}\" -–no-check-certificate", GetName(0), GetURL(0));
         }
     }
+
+    public static string FormatJson(string json)
+    {
+        dynamic parsedJson = JsonConvert.DeserializeObject(json);
+        return JsonConvert.SerializeObject(parsedJson, Formatting.Indented);
+    }
 }
