@@ -159,25 +159,6 @@ public static class DataUtils
         context.SaveChanges();
     }
 
-
-    public static void LoadSampleData(KonaContext context)
-    {
-        // var sampleTags = JsonConvert.DeserializeObject<List<tag>>(File.ReadAllText("tag.json"));
-        // if (null != sampleTags)
-        // {
-        //     AddOrUpdateTags(sampleTags, context);
-        // }
-
-        // var samplePosts = JsonConvert.DeserializeObject<List<post>>(File.ReadAllText("post.json"));
-        // if (null != samplePosts)
-        // {
-        //     foreach (var p in samplePosts)
-        //     {
-        //         AddOrUpdatePost(p, context);
-        //     }
-        // }
-    }
-
     public class TagDownload
     {
         public string tag;

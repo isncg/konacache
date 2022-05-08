@@ -38,10 +38,10 @@ public class FetchPostsByTag : PageModel
         }
     }
 
-    private PostUpdate postUpdate;
-    public FetchPostsByTag(PostUpdate postUpdate)
+    private KonaUpdateService updateService;
+    public FetchPostsByTag(KonaUpdateService updateService)
     {
-        this.postUpdate = postUpdate;
+        this.updateService = updateService;
     }
 
     public async Task<IActionResult> OnGetAsync()
@@ -68,7 +68,7 @@ public class FetchPostsByTag : PageModel
     {
         if (!string.IsNullOrWhiteSpace(postContent))
         {
-            postUpdate.Add(string.IsNullOrWhiteSpace(submitMessage) ? string.Format("Fatched posts with tag {0}", tags) : submitMessage, postContent);
+            updateService.Add(KonaUpdateService.UpdateItemType.Posts, string.IsNullOrWhiteSpace(submitMessage) ? string.Format("Fatched posts with tag {0}", tags) : submitMessage, postContent);
             return RedirectToPage("./UpdatePostsProgress");
         }
         return RedirectToPage("/Index");

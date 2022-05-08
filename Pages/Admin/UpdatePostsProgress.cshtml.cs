@@ -8,13 +8,13 @@ namespace kona.Pages;
 
 public class UpdatePostsProressModel : PageModel
 {
-    private readonly PostUpdate _context;
+    private readonly KonaUpdateService _context;
 
-    public UpdatePostsProressModel(Kona.PostUpdate context)
+    public UpdatePostsProressModel(Kona.KonaUpdateService context)
     {
         _context = context;
     }
-    public List<PostUpdate.Item> updateItems { get; set; }
+    public List<KonaUpdateService.UpdateItem> updateItems { get; set; }
 
 
     public IActionResult OnGet()

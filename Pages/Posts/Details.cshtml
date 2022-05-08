@@ -3,6 +3,7 @@
 
 @{
     ViewData["Title"] = "Details";
+    int tagIndex = 0;
 }
 
 <h1>Details</h1>
@@ -30,16 +31,25 @@
         </dt>
         <dd class="col-sm-11">
             <dl class="row">
-                @foreach (var tag in Model.Tags)
+                @foreach (var tagTypeAndList in Model.Tags)
                 {
-                    <dt class="col-sm-1">@tag.Item1.ToString()</dt>
+                    <dt class="col-sm-1">@tagTypeAndList.Item1.ToString()</dt>
                     <dd class="col-sm-11">
-                        <ul>
-                            @foreach (var item in tag.Item2)
+                        @{
+                            tagIndex = 0;
+                        }
+                        @foreach (var item in tagTypeAndList.Item2)
+                        {
+                            if (tagIndex > 0)
                             {
-                                <li class="d-inline">@item.Name</li>
+                                <span>|</span>
                             }
-                        </ul>
+                            <a asp-page="/Posts/Search" asp-route-tags="@item.Name">@item.Name</a>
+                            <a asp-page="/Admin/FetchTags" asp-route-tagSearch="@item.Name">+</a>
+                            {
+                                tagIndex++;
+                            }
+                        }
                     </dd>
                 }
             </dl>

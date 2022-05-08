@@ -11,6 +11,7 @@
             <input class="col-12 btn btn-primary" type="submit" value="Search" />
         </div>
         <div class="col-10">
+            <input asp-for="redirect" value="/Posts/Index" hidden/>
             <input asp-for="tags" class="col-12 form-control" name="tags" placeholder="please input tags" />
         </div>
     </div>
@@ -34,15 +35,20 @@
     var nextDisabled = !Model.Posts.HasNextPage ? "disabled" : "";
 }
 
-<a asp-page="./Index"
+<a asp-page="./Search"
    asp-route-pageIndex="@(Model.Posts.PageIndex - 1)"
    asp-route-tags="@(Model.tags)"
    class="btn btn-primary @prevDisabled">
     Previous
 </a>
-<a asp-page="./Index"
+<a asp-page="./Search"
    asp-route-pageIndex="@(Model.Posts.PageIndex + 1)"
    asp-route-tags="@(Model.tags)"
    class="btn btn-primary @nextDisabled">
     Next
+</a>
+<a asp-page="/Admin/FetchPostsByTag"
+   asp-route-tags="@Model.tags"
+   class="btn btn-primary">
+    Fetch More about '@Model.tags'
 </a>

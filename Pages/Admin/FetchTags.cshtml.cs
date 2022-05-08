@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace kona.Pages;
-class FetchTags: PageModel
+class FetchTagsModel: PageModel
 {
     static HttpClient _httpClient = null;
     private HttpClient httpClient
@@ -23,7 +23,7 @@ class FetchTags: PageModel
         }
     }
     [BindProperty(SupportsGet = true)]
-    public string tag { get; set; }
+    public string tagSearch { get; set; }
     [BindProperty(SupportsGet = true)]
     public string source { get; set; }
     public string result {get; private set;}
@@ -35,14 +35,21 @@ class FetchTags: PageModel
     public string submitMessage { get; set; }
     [BindProperty]
     public string submitContent { get; set; }
+
+    private KonaUpdateService updateService;
+
+    public FetchTagsModel(KonaUpdateService updateSerivce)
+    {
+        this.updateService = updateSerivce;
+    }
     public async Task<IActionResult> OnGetAsync()
     {
-        if (string.IsNullOrWhiteSpace(tag) && string.IsNullOrWhiteSpace(source))
+        if (string.IsNullOrWhiteSpace(tagSearch) && string.IsNullOrWhiteSpace(source))
             return Page();
 
         try
         {
-            var response = httpClient.GetAsync("https://konachan.net/tag.json?order=count&limit=10000&name=" + tag);
+            var response = httpClient.GetAsync("https://konachan.net/tag.json?order=count&limit=10000&name=" + tagSearch);
             result = await response.Result.Content.ReadAsStringAsync();
             resultFormatted = DataUtils.FormatJson(result);
             fetchSuccess = true;
@@ -56,8 +63,13 @@ class FetchTags: PageModel
         return Page();
     }
 
-    public async Task<IActionResult> OnPostAsync()
+    public IActionResult OnPostAsync()
     {
+        if (!string.IsNullOrWhiteSpace(submitContent))
+        {
+            updateService.Add(KonaUpdateService.UpdateItemType.Tags, string.IsNullOrWhiteSpace(submitMessage) ? string.Format("Fatched posts with tag search {0}", tagSearch) : submitMessage, submitContent);
+            return RedirectToPage("./UpdatePostsProgress");
+        }
         return RedirectToPage("/Index");
     }
 }

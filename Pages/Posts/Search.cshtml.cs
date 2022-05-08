@@ -24,7 +24,7 @@ public class SearchModel : PageModel
     [BindProperty(SupportsGet = true)]
     public String tags { get; set; }
     [BindProperty(SupportsGet = true)]
-    public bool redirect { get; set; }
+    public String redirect { get; set; }
 
     //public IList<Post> Post { get; set; }
     public int ViewColumn { get; set; } = 4;
@@ -37,9 +37,11 @@ public class SearchModel : PageModel
     {
         var tagNames = tags?.Split(' ') ?? new string[] { };
         var pageSize = _configuration.GetValue<int>("PostsPerPage", 20);
-        if (tagNames.Length == 0 && redirect)
+        if (tagNames.Length == 0)
         {
-            return Redirect("/Posts");
+            if(string.IsNullOrWhiteSpace(redirect))
+                return Redirect("/Posts/Index");
+            return Redirect(redirect);
         }
         HashSet<int> rawTagIDs = new HashSet<int>();
         foreach (var name in tagNames)

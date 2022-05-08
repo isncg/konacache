@@ -8,9 +8,9 @@ namespace kona.Pages;
 
 public class UpdatePostsModel : PageModel
 {
-    private readonly PostUpdate _context;
+    private readonly KonaUpdateService _context;
 
-    public UpdatePostsModel(Kona.PostUpdate context)
+    public UpdatePostsModel(Kona.KonaUpdateService context)
     {
         _context = context;
     }
@@ -27,7 +27,7 @@ public class UpdatePostsModel : PageModel
             {
                 StreamReader reader = new StreamReader(file.OpenReadStream());
                 var json = reader.ReadToEnd();
-                _context.Add(file.FileName, json);
+                _context.Add(KonaUpdateService.UpdateItemType.Posts, file.FileName, json);
             }
             catch (Exception e)
             {

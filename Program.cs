@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddDbContext<KonaContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("KonaContext") ?? throw new InvalidOperationException("Connection string 'KonaContext' not found.")));
-builder.Services.AddSingleton<PostUpdate>();
+builder.Services.AddSingleton<KonaUpdateService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -28,8 +28,7 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
 
     var context = services.GetRequiredService<KonaContext>();
-    if (context.Database.EnsureCreated())
-        DataUtils.LoadSampleData(context);
+    context.Database.EnsureCreated();
 }
 
 

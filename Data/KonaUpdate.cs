@@ -2,9 +2,9 @@ using Kona;
 using Newtonsoft.Json;
 
 namespace Kona;
-public class PostUpdate
+public class KonaUpdateService
 {
-    public enum ProcessState
+    public enum UpdateItemProcessState
     {
         Pending,
         Processing,
@@ -12,43 +12,52 @@ public class PostUpdate
         Failed,
     }
 
-    //private KonaContext context;
+    public enum UpdateItemType
+    {
+        None = 0,
+        Posts,
+        Tags,
+    }
 
     private readonly IServiceScopeFactory scopeFactory;
 
-    public PostUpdate(IServiceScopeFactory scopeFactory)
+    public KonaUpdateService(IServiceScopeFactory scopeFactory)
     {
         this.scopeFactory = scopeFactory;
         this.processTask = new Task(Process);
     }
-    // public PostUpdate(IServiceProvider sp)
-    // {
-    //     this.context = sp.GetRequiredService<KonaContext>();
-    //     this.processTask = new Task(Process);
-    // }
-    public class Item
+
+    public class UpdateItem
     {
+        public UpdateItemType type;
         public string name;
         public string json;
-        public ProcessState state;
+        public UpdateItemProcessState state;
         public string message;
         public int total;
         public int progress;
         public string GetProgressStr()
         {
-            return state == ProcessState.Pending ? "N/A" : string.Format("{0}/{1}", progress, total);
+            switch (state)
+            {
+                case UpdateItemProcessState.Pending:
+                    return "N/A";
+                case UpdateItemProcessState.Processing:
+                    return total == 0 ? "Calculating..." : $"{progress}/{total}";
+            }
+            return $"{progress}/{total}";
         }
-
     }
 
-    private readonly List<Item> pendingList = new List<Item>();
-    private readonly List<Item> processingList = new List<Item>();
-    private readonly List<Item> finishedList = new List<Item>();
+
+    private readonly List<UpdateItem> pendingList = new List<UpdateItem>();
+    private readonly List<UpdateItem> processingList = new List<UpdateItem>();
+    private readonly List<UpdateItem> finishedList = new List<UpdateItem>();
 
     Task processTask;
-    public void Add(string name, string json)
+    public void Add(UpdateItemType type, string name, string json)
     {
-        pendingList.Add(new Item { name = name, json = json, state = ProcessState.Pending, message = string.Empty });
+        pendingList.Add(new UpdateItem { type = type, name = name, json = json, state = UpdateItemProcessState.Pending, message = string.Empty });
     }
 
     public void Begin()
@@ -78,9 +87,9 @@ public class PostUpdate
         pendingList.Clear();
     }
 
-    public List<Item> GetStatus()
+    public List<UpdateItem> GetStatus()
     {
-        List<Item> result = new List<Item>();
+        List<UpdateItem> result = new List<UpdateItem>();
         result.AddRange(pendingList);
         result.AddRange(processingList);
         result.AddRange(finishedList);
@@ -99,36 +108,63 @@ public class PostUpdate
         {
             try
             {
-                item.state = ProcessState.Processing;
-                var rawPosts = JsonConvert.DeserializeObject<List<DataUtils.post>>(item.json);
-                if (null != rawPosts)
+                item.state = UpdateItemProcessState.Processing;
+                switch (item.type)
                 {
-                    int count = 0;
-                    item.total = rawPosts.Count;
-                    item.progress = 0;
-                    List<int> invalidIds = new List<int>();
-                    foreach (var p in rawPosts)
-                    {
-                        item.progress++;
-                        if (p.IsValid)
+                    case UpdateItemType.Posts:
                         {
-                            DataUtils.AddOrUpdatePost(p, context);
-                            count++;
+                            var rawPosts = JsonConvert.DeserializeObject<List<DataUtils.post>>(item.json);
+                            if (null != rawPosts)
+                            {
+                                int count = 0;
+                                item.total = rawPosts.Count;
+                                item.progress = 0;
+                                List<int> invalidIds = new List<int>();
+                                foreach (var p in rawPosts)
+                                {
+                                    item.progress++;
+                                    if (p.IsValid)
+                                    {
+                                        DataUtils.AddOrUpdatePost(p, context);
+                                        count++;
+                                    }
+                                    else
+                                    {
+                                        invalidIds.Add(p.id);
+                                    }
+                                }
+                                item.message = string.Format("{0} posts added or updated", count);
+                                if (invalidIds.Count > 0)
+                                    item.message += string.Format(", invalid ids: [{0}]", string.Join(", ", invalidIds));
+                            }
+
                         }
-                        else
+                        break;
+                    case UpdateItemType.Tags:
                         {
-                            invalidIds.Add(p.id);
+                            var tags = JsonConvert.DeserializeObject<List<DataUtils.tag>>(item.json);
+                            if (null != tags)
+                            {
+                                item.total = tags.Count;
+                                item.progress = 0;
+                                item.message = $"{tags.Count} tags are adding or updating in one batch";
+                                DataUtils.AddOrUpdateTags(tags, context);
+                                item.progress = item.total;
+                                item.message = $"{tags.Count} tags added or updated in one batch";
+                            }
+                            else
+                            {
+                                item.message = "Invalid data, skip";
+                            }
                         }
-                    }
-                    item.message = string.Format("{0} post(s) added or updated", count);
-                    if (invalidIds.Count > 0)
-                        item.message += string.Format(", invalid ids: [{0}]", string.Join(", ", invalidIds));
+                        break;
                 }
-                item.state = ProcessState.Finished;
+                item.state = UpdateItemProcessState.Finished;
+
             }
             catch (Exception e)
             {
-                item.state = ProcessState.Failed;
+                item.state = UpdateItemProcessState.Failed;
                 item.message = e.Message + "\n" + e.InnerException;
             }
 
