@@ -37,6 +37,7 @@ public class SearchModel : PageModel
     {
         var tagNames = tags?.Split(' ') ?? new string[] { };
         var pageSize = _configuration.GetValue<int>("PostsPerPage", 20);
+        PostGrid = new List<List<Post>>();
         if (tagNames.Length == 0)
         {
             if(string.IsNullOrWhiteSpace(redirect))
@@ -64,7 +65,6 @@ public class SearchModel : PageModel
                 joinedResult = Queryable.Join(joinedResult, queryableList[i], e => e.ID, e => e.ID, (o, i) => o);
             }
             Posts = await PaginatedList<Post>.CreateAsync(joinedResult, pageIndex ?? 1, pageSize: pageSize);
-            PostGrid = new List<List<Post>>();
             int count = Posts.Count;
             List<Post> row = null;
             for (int i = 0; i < count; i++)

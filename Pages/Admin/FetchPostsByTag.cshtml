@@ -4,31 +4,27 @@
     ViewData["Title"] = "Update";
 }
 
+<form method="get">
+    <label>Tags</label>
+    <input type="text" name="tags" placeholder="input tags here" value="@Model.tags" />
+    <input type="text" name="sortingTags" hidden value="order:date" />
+    <input type="text" name="fetchNow" hidden value="true" />
+    <label>Page index</label>
+    <input type="number" name="pageIndex" min="1" max="100000000" value="@Model.pageIndex" />
+    <input type="submit" value="Fetch" />
+</form>
 
-@if (string.IsNullOrWhiteSpace(Model.tags))
-{
-    <form method="get">
-        <input type="text" asp-for="@Model.tags" />
-        <input type="number" asp-for="@Model.page" min="1" max="100000000" value="1"/>
-        <input type="submit" value="Fetch" />
-    </form>
-
-    <form method="get">
-        <input type="text" asp-for="@Model.tags" hidden value="order:date"/>
-        <input type="number" asp-for="@Model.page" value="1"/>
-        <input type="submit" value="Fetch Latest" />
-    </form>
-}
-else
-{
-    <h2>Fetch posts with tag '@Model.tags' at page @Model.page</h2>
-}
 
 @if (Model.fetchSuccess)
 {
+    <h2>@Model.GetDefaultSubmitMessage()</h2>
+    <p>@Model.url</p>
     <form method="post">
-        <input asp-for="@Model.submitMessage" value="" placeholder="submit message" />
-        <input asp-for="@Model.postContent" value="@Model.result" hidden />
+        <input name="submitMessage" value="@Model.GetDefaultSubmitMessage()" placeholder="submit message" />
+        <input name="submitContent" value="@Model.result" hidden />
+        <input type="text" name="tags" value="@Model.tags" hidden />
+        <input type="text" name="sortingTags" value="order:date" hidden />
+        <input type="number" name="pageIndex" value="@Model.pageIndex" hidden />
         <input type="submit" />
     </form>
     <pre><code>@Model.resultFormatted</code></pre>
@@ -37,3 +33,7 @@ else
 {
     <pre><code>@Model.error</code></pre>
 }
+
+<a asp-page="/Admin/UpdatePostsProgress" class="btn btn-primary">
+    Show progress
+</a>

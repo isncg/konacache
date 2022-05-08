@@ -7,20 +7,18 @@ namespace kona.Pages;
 
 public class FetchPostsByTag : PageModel
 {
-    [BindProperty(SupportsGet = true)]
+    public int pageIndex { get; set; }
     public string tags { get; set; }
-    [BindProperty(SupportsGet = true)]
-    public int page { get; set; }
+    public string url { get; set; }
     public string result { get; set; }
     public string resultFormatted { get; set; }
     public string error { get; set; }
     public bool fetchSuccess { get; set; }
 
-    [BindProperty]
-    public string submitMessage { get; set; }
-    [BindProperty]
-    public string postContent { get; set; }
-    static HttpClient _httpClient = null;
+    //public string submitMessage { get; set; }
+    //public string postContent { get; set; }
+    private string emptyTags { get; set; }
+    static HttpClient? _httpClient = null;
     private HttpClient httpClient
     {
         get
@@ -44,13 +42,28 @@ public class FetchPostsByTag : PageModel
         this.updateService = updateService;
     }
 
-    public async Task<IActionResult> OnGetAsync()
+    public async Task<IActionResult> OnGetAsync(string tags, string sortingTags, string pageIndex, string fetchNow)
     {
-        if (!string.IsNullOrWhiteSpace(tags))
+        return await Show(tags, sortingTags, pageIndex, fetchNow);
+    }
+
+    public async Task<IActionResult> Show(string tags, string sortingTags, string pageIndex, string? fetchNow)
+    {
+        this.tags = tags;
+        if (int.TryParse(pageIndex, out var _page))
+            this.pageIndex = _page;
+        else
+            this.pageIndex = 1;
+        this.pageIndex = Math.Max(1, this.pageIndex);
+        emptyTags = string.IsNullOrWhiteSpace(tags) ? "latest posts" : string.Empty;
+        string combinedTags = string.Format("{0} {1}", tags, sortingTags).Trim();
+        result = string.Empty;
+        if (!string.IsNullOrWhiteSpace(combinedTags) && !string.IsNullOrWhiteSpace(fetchNow))
         {
             try
             {
-                var response = httpClient.GetAsync("https://konachan.net/post.json?limit=100&tags=" + tags);
+                url = $"https://konachan.net/post.json?limit=100&page={this.pageIndex}&tags={combinedTags}";
+                var response = httpClient.GetAsync(url);
                 result = await response.Result.Content.ReadAsStringAsync();
                 resultFormatted = DataUtils.FormatJson(result);
                 fetchSuccess = true;
@@ -61,16 +74,25 @@ public class FetchPostsByTag : PageModel
                 error = e.Message + "\n" + e.InnerException;
             }
         }
+        //submitMessage = GetDefaultSubmitMessage();
         return Page();
     }
 
-    public IActionResult OnPost()
+    public async Task<IActionResult> OnPost(string submitMessage, string submitContent, string tags, string sortingTags, string pageIndex)
     {
-        if (!string.IsNullOrWhiteSpace(postContent))
+        if (!string.IsNullOrWhiteSpace(submitContent))
         {
-            updateService.Add(KonaUpdateService.UpdateItemType.Posts, string.IsNullOrWhiteSpace(submitMessage) ? string.Format("Fatched posts with tag {0}", tags) : submitMessage, postContent);
-            return RedirectToPage("./UpdatePostsProgress");
+            updateService.Add(KonaUpdateService.UpdateItemType.Posts, string.IsNullOrWhiteSpace(submitMessage) ? GetDefaultSubmitMessage() : submitMessage, submitContent);
+            updateService.Begin();
         }
-        return RedirectToPage("/Index");
+        return await Show(tags, sortingTags, pageIndex, null);
+    }
+
+    public string GetDefaultSubmitMessage()
+    {
+        if (string.IsNullOrWhiteSpace(tags))
+            return string.Format("Fetched {0} on page {1}", emptyTags, pageIndex);
+        else
+            return string.Format("Fetched posts of '{0}' on page {1}", tags, pageIndex);
     }
 }

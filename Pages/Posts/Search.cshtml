@@ -31,22 +31,21 @@
 </div>
 
 @{
-    var prevDisabled = !Model.Posts.HasPreviousPage ? "disabled" : "";
-    var nextDisabled = !Model.Posts.HasNextPage ? "disabled" : "";
+    var prevDisabled = null == Model.Posts || !Model.Posts.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = null == Model.Posts || !Model.Posts.HasNextPage ? "disabled" : "";
 }
 
-<a asp-page="./Search"
-   asp-route-pageIndex="@(Model.Posts.PageIndex - 1)"
-   asp-route-tags="@(Model.tags)"
-   class="btn btn-primary @prevDisabled">
-    Previous
-</a>
-<a asp-page="./Search"
-   asp-route-pageIndex="@(Model.Posts.PageIndex + 1)"
-   asp-route-tags="@(Model.tags)"
-   class="btn btn-primary @nextDisabled">
-    Next
-</a>
+@if (null != Model.Posts)
+{
+    <a asp-page="./Search" asp-route-pageIndex="@(Model.Posts.PageIndex - 1)" asp-route-tags="@(Model.tags)"
+    class="btn btn-primary @prevDisabled">
+        Previous
+    </a>
+    <a asp-page="./Search" asp-route-pageIndex="@(Model.Posts.PageIndex + 1)" asp-route-tags="@(Model.tags)"
+    class="btn btn-primary @nextDisabled">
+        Next
+    </a>
+}
 <a asp-page="/Admin/FetchPostsByTag"
    asp-route-tags="@Model.tags"
    class="btn btn-primary">
