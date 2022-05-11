@@ -20,6 +20,8 @@ namespace Kona
         public DbSet<RawTag> RawTags {get; set;}
         public DbSet<PostTag> PostTags {get; set;}
         public DbSet<PostRawTag> PostRawTags {get; set;}
+        public DbSet<Subscribe> Subscribes {get;set;}
+        public DbSet<SubscribeRawTag> SubscribeRawTags {get;set;}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

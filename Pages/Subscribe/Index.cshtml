@@ -1,0 +1,42 @@
+@page
+@model Kona.Pages.SubscribeIndexModel
+
+@foreach (var item in Model.items)
+{
+    <div class="row postrow subscriberow">
+        <div class="col-sm-2 subscribefontsize">
+            <h2>@item.subscribe.Name</h2>
+
+            @{
+                int tagIndex = 0;
+            }
+            @foreach (var t in item.tags)
+            {
+                if (tagIndex > 0)
+                {
+                    <span>|</span>
+                }
+                <a asp-page="/Posts/Search" asp-route-tags="@t.Name">@t.Name</a>
+                <a asp-page="/Admin/FetchTags" asp-route-tagSearch="@t.Name">+</a>
+                {
+                    tagIndex++;
+                }
+            }
+
+        </div>
+        <div class="col-sm-9">
+            @if (null != item.recentPosts)
+            {
+                foreach (var post in item.recentPosts)
+                {
+                    <a asp-page="/Posts/Details" asp-route-id="@post.ID">
+                        <img class="subscribelistimg" src="@post.Preview" alt="@post.ID.ToString()" referrerpolicy="no-referrer" />
+                    </a>
+                }
+            }
+        </div>
+        <div class="col-sm-1"></div>
+    </div>
+}
+
+<a asp-page="./Create">Add new</a>

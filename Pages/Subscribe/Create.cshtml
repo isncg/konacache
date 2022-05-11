@@ -1,0 +1,26 @@
+@page
+@model Kona.Pages.SubscribeCreateMode
+
+<form method="get">
+    <label>Name</label>
+    <input name = "name" value="@Model.inputName"/>
+    <label>Tags</label>
+    <input name = "tags" value="@Model.inputTags"/>
+    <input name = "confirm" type="number" value="1" hidden/>
+    <input type="submit" />
+</form>
+
+@if (!string.IsNullOrWhiteSpace(Model.error))
+{
+    <p>@Model.error</p>
+}
+
+@if(Model.rawTags!=null && Model.rawTags.Count>0)
+{
+    foreach(var t in Model.rawTags)
+    {
+        <p>@t.Name</p>
+    }
+}
+
+<a asp-page="./Index">Index</a>

@@ -26,3 +26,16 @@ body {
   padding-top: 1rem;
   font-size: 0px;
 }
+
+.subscribelistimg{
+  width: 33%;
+  padding-right: 0.2%;
+}
+
+.subscribefontsize{
+  font-size: var(--bs-body-font-size);
+}
+
+.subscriberow{
+  text-align: right;
+}

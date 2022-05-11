@@ -2,7 +2,7 @@ using Kona;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace kona.Pages;
+namespace Kona.Pages;
 class FetchTagsModel: PageModel
 {
     static HttpClient _httpClient = null;

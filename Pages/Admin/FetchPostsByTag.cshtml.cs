@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
 
-namespace kona.Pages;
+namespace Kona.Pages;
 
 public class FetchPostsByTag : PageModel
 {

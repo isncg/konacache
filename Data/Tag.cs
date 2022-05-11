@@ -1,6 +1,6 @@
 using Kona;
 
-namespace kona;
+namespace Kona;
 public enum TagType
 {
     General = 0,

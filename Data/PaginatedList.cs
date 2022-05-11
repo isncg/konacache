@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
-namespace kona
+namespace Kona
 {
     public class PaginatedList<T> : List<T>
     {
