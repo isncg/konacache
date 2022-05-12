@@ -15,11 +15,13 @@ namespace kona.Pages.Posts
     {
         private readonly Kona.KonaContext _context;
         private readonly IConfiguration _configuration;
+        private readonly RatingFilterService _filter;
 
-        public IndexModel(Kona.KonaContext context, IConfiguration configuration)
+        public IndexModel(Kona.KonaContext context, IConfiguration configuration, RatingFilterService filter)
         {
             _context = context;
             _configuration = configuration;
+            _filter = filter;
         }
 
         //public IList<Post> Post { get; set; }
@@ -31,7 +33,7 @@ namespace kona.Pages.Posts
         public async Task OnGetAsync(int? pageIndex)
         {
             var pageSize = _configuration.GetValue<int>("PostsPerPage", 20);
-            Posts = await PaginatedList<Post>.CreateAsync(_context.Posts.Select(p => p).Where(p => p.Rating == PostRating.S).OrderByDescending(p => p.ID), pageIndex ?? 1, pageSize: pageSize);
+            Posts = await PaginatedList<Post>.CreateAsync(_context.Posts.SelectFilter(_filter).OrderByDescending(p => p.ID), pageIndex ?? 1, pageSize: pageSize);
             // Post = await _context.Posts.Select(p => p).Where(p => p.Rating == PostRating.S).OrderByDescending(p=>p.ID).ToListAsync();
             PostGrid = new List<List<Post>>();
             int count = Posts.Count;

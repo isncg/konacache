@@ -1,0 +1,16 @@
+@page
+@model Kona.Pages.SubscribeEditModel
+
+@if (null != Model.vm)
+{
+    <form method="get">
+        <input name="id" value="@Model.vm.inputID" hidden>
+        <label>Name</label>
+        <input name="newName" value="@Model.vm.inputName">
+        <label>Tags</label>
+        <input name="newTags" value="@Model.vm.inputTags">
+        <input type="submit">
+    </form>
+}
+
+<p>@Model.error</p>

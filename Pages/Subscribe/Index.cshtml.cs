@@ -16,10 +16,12 @@ public class SubscribeIndexModel : PageModel
 
     public List<Item> items;
     KonaContext db;
+    RatingFilterService filter;
 
-    public SubscribeIndexModel(KonaContext db)
+    public SubscribeIndexModel(KonaContext db, RatingFilterService filter)
     {
         this.db = db;
+        this.filter = filter;
     }
 
 
@@ -34,7 +36,7 @@ public class SubscribeIndexModel : PageModel
             IQueryable<Post> joinedResult = null;
             foreach (var rt in item.tags)
             {
-                queryableList.Add(db.PostRawTags.Where(e => e.RawTagID == rt.ID && e.Post.Rating == PostRating.S).Select(e => e.Post));
+                queryableList.Add(db.PostRawTags.Where(e => e.RawTagID == rt.ID).Select(e => e.Post).SelectFilter(filter));
             }
             if (queryableList.Count > 0)
             {

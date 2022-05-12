@@ -5,24 +5,28 @@
 {
     <div class="row postrow subscriberow">
         <div class="col-sm-2 subscribefontsize">
-            <h2>@item.subscribe.Name</h2>
-
-            @{
-                int tagIndex = 0;
-            }
-            @foreach (var t in item.tags)
-            {
-                if (tagIndex > 0)
-                {
-                    <span>|</span>
+            <h3>@item.subscribe.Name</h3>
+            <div>
+                @{
+                    int tagIndex = 0;
                 }
-                <a asp-page="/Posts/Search" asp-route-tags="@t.Name">@t.Name</a>
-                <a asp-page="/Admin/FetchTags" asp-route-tagSearch="@t.Name">+</a>
+                @foreach (var t in item.tags)
                 {
-                    tagIndex++;
+                    if (tagIndex > 0)
+                    {
+                        <span>|</span>
+                    }
+                    <a asp-page="/Posts/Search" asp-route-tags="@t.Name">@t.Name</a>
+                    <a asp-page="/Admin/FetchTags" asp-route-tagSearch="@t.Name">+</a>
+                    {
+                        tagIndex++;
+                    }
                 }
-            }
 
+            </div>
+            <div>
+                <a asp-page="./Edit" asp-route-id="@item.subscribe.ID">Edit</a>
+            </div>
         </div>
         <div class="col-sm-9">
             @if (null != item.recentPosts)

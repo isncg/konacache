@@ -1,0 +1,13 @@
+@page
+@model Kona.Pages.RatingPageModel
+
+<form method="get">
+    <label>S</label>
+    <input type="checkbox" name="s" checked="@Model.s">
+    <label>Q</label>
+    <input type="checkbox" name="q" checked="@Model.q">
+    <label>E</label>
+    <input type="checkbox" name="e" checked="@Model.e">
+    <input name="confirm" value="1" hidden>
+    <input type="submit">
+</form>

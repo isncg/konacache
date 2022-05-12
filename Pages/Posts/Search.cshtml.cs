@@ -15,11 +15,13 @@ public class SearchModel : PageModel
 {
     private readonly Kona.KonaContext _context;
     private readonly IConfiguration _configuration;
+    private readonly RatingFilterService _filter;
 
-    public SearchModel(Kona.KonaContext context, IConfiguration configuration)
+    public SearchModel(Kona.KonaContext context, IConfiguration configuration, RatingFilterService filter)
     {
         _context = context;
         _configuration = configuration;
+        _filter = filter;
     }
     [BindProperty(SupportsGet = true)]
     public String tags { get; set; }
@@ -55,7 +57,7 @@ public class SearchModel : PageModel
         List<IQueryable<Post>> queryableList = new List<IQueryable<Post>>();
         foreach (var rtid in rawTagIDs)
         {
-            queryableList.Add(_context.PostRawTags.Where(e => e.RawTagID == rtid && e.Post.Rating == PostRating.S).Select(e => e.Post));
+            queryableList.Add(_context.PostRawTags.Where(e => e.RawTagID == rtid).Select(e => e.Post).SelectFilter(_filter));
         }
         if (queryableList.Count > 0)
         {
