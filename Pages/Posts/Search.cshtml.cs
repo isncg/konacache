@@ -66,7 +66,7 @@ public class SearchModel : PageModel
             {
                 joinedResult = Queryable.Join(joinedResult, queryableList[i], e => e.ID, e => e.ID, (o, i) => o);
             }
-            Posts = await PaginatedList<Post>.CreateAsync(joinedResult, pageIndex ?? 1, pageSize: pageSize);
+            Posts = await PaginatedList<Post>.CreateAsync(joinedResult.OrderByDescending(e=>e.ID), pageIndex ?? 1, pageSize: pageSize);
             int count = Posts.Count;
             List<Post> row = null;
             for (int i = 0; i < count; i++)
