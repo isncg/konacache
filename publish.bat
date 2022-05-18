@@ -1,0 +1,1 @@
+dotnet publish --self-contained -o ../konacache_win_x64 -r win-x64
