@@ -62,19 +62,17 @@ public class AutoUpdate
                 bool result = updateTask.Result;
                 if (page >= 1024)
                     page = 1;
-                Console.Write($"Auto update finish, result = {result}");
+                Console.WriteLine($"Auto update finish, result = {result}");
                 if (result)
                 {
                     page++;
-                    Task.Delay(1000 * 60 * 5).Wait();
-                    continue;
                 }
             }
             else
             {
                 updateService.Begin();
             }
-            Task.Delay(1000 * 5).Wait();
+            Task.Delay(1000 * 30).Wait();
         }
     }
 
@@ -88,6 +86,7 @@ public class AutoUpdate
         {
             try
             {
+                Console.WriteLine($"Loading url {url}");
                 var response = httpClient.GetAsync(url);
                 result = await response.Result.Content.ReadAsStringAsync();
                 break;
