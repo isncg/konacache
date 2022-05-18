@@ -9,6 +9,7 @@ builder.Services.AddDbContext<KonaContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("KonaContext") ?? throw new InvalidOperationException("Connection string 'KonaContext' not found.")));
 builder.Services.AddSingleton<KonaUpdateService>();
 builder.Services.AddSingleton<RatingFilterService>();
+builder.Services.AddSingleton<AutoUpdate>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -32,8 +33,9 @@ using (var scope = app.Services.CreateScope())
     context.Database.EnsureCreated();
 }
 
-
+app.Services.GetService<AutoUpdate>()?.Begin();
 app.UseHttpsRedirection();
+builder.WebHost.UseWebRoot("wwwroot");
 app.UseStaticFiles();
 
 app.UseRouting();

@@ -87,6 +87,8 @@ public class KonaUpdateService
         pendingList.Clear();
     }
 
+    public bool IsPendingEmpty => pendingList.Count == 0;
+
     public List<UpdateItem> GetStatus()
     {
         List<UpdateItem> result = new List<UpdateItem>();

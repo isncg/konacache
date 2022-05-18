@@ -60,19 +60,30 @@ public class FetchPostsByTag : PageModel
         result = string.Empty;
         if (!string.IsNullOrWhiteSpace(combinedTags) && !string.IsNullOrWhiteSpace(fetchNow))
         {
-            try
+            url = $"https://konachan.net/post.json?limit=100&page={this.pageIndex}&tags={combinedTags}";
+            int tryCount = 16;
+            while (tryCount-- > 0)
             {
-                url = $"https://konachan.net/post.json?limit=100&page={this.pageIndex}&tags={combinedTags}";
-                var response = httpClient.GetAsync(url);
-                result = await response.Result.Content.ReadAsStringAsync();
-                resultFormatted = DataUtils.FormatJson(result);
-                fetchSuccess = true;
+                try
+                {
+                    var response = httpClient.GetAsync(url);
+                    result = await response.Result.Content.ReadAsStringAsync();
+                    resultFormatted = DataUtils.FormatJson(result);
+                    fetchSuccess = true;
+                    break;
+                }
+                catch (Exception e)
+                {
+                    fetchSuccess = false;
+                    error = e.Message + "\n" + e.InnerException;
+                }
+                if (tryCount > 0)
+                {
+                    Console.WriteLine($"Failed to load {url}, remain try count {tryCount}");
+                    await Task.Delay(2000);
+                }
             }
-            catch (Exception e)
-            {
-                fetchSuccess = false;
-                error = e.Message + "\n" + e.InnerException;
-            }
+
         }
         //submitMessage = GetDefaultSubmitMessage();
         return Page();
