@@ -8,11 +8,11 @@ namespace Kona.Pages;
 
 public class UpdatePostsModel : PageModel
 {
-    private readonly KonaUpdateService _context;
+    private readonly KonaUpdateService updateService;
 
-    public UpdatePostsModel(Kona.KonaUpdateService context)
+    public UpdatePostsModel(Kona.KonaUpdateService updateService)
     {
-        _context = context;
+        this.updateService = updateService;
     }
     [BindProperty]
     public List<IFormFile> files { get; set; }
@@ -27,7 +27,7 @@ public class UpdatePostsModel : PageModel
             {
                 StreamReader reader = new StreamReader(file.OpenReadStream());
                 var json = reader.ReadToEnd();
-                _context.Add(KonaUpdateService.UpdateItemType.Posts, file.FileName, json);
+                updateService.Add(KonaUpdateService.UpdateItemType.Posts, file.FileName, json);
             }
             catch (Exception e)
             {

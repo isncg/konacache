@@ -5,7 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
-builder.Services.AddDbContext<KonaContext>(options =>
+builder.Services.AddDbContext<KonaDB>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("KonaContext") ?? throw new InvalidOperationException("Connection string 'KonaContext' not found.")));
 builder.Services.AddSingleton<KonaUpdateService>();
 builder.Services.AddSingleton<RatingFilterService>();
@@ -29,7 +29,7 @@ using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
 
-    var context = services.GetRequiredService<KonaContext>();
+    var context = services.GetRequiredService<KonaDB>();
     context.Database.EnsureCreated();
 }
 

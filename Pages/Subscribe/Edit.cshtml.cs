@@ -10,7 +10,7 @@ public class SubscribeEditVM
     public string inputID => subscribe?.ID.ToString() ?? string.Empty;
     public string inputName => subscribe?.Name ?? string.Empty;
     public string inputTags => null == tags ? string.Empty : string.Join(' ', tags.ConvertAll(e => e.Name));
-    public static async Task<SubscribeEditVM> GetItem(Kona.Subscribe subscribe, KonaContext db)
+    public static async Task<SubscribeEditVM> GetItem(Kona.Subscribe subscribe, KonaDB db)
     {
         var result = new SubscribeEditVM();
         result.subscribe = subscribe;
@@ -20,10 +20,10 @@ public class SubscribeEditVM
 }
 public class SubscribeEditModel: PageModel
 {
-    KonaContext db;
+    KonaDB db;
     public SubscribeEditVM vm; 
     public string error;
-    public SubscribeEditModel(KonaContext db)
+    public SubscribeEditModel(KonaDB db)
     {
         this.db = db;
     }

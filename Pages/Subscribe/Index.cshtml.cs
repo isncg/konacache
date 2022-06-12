@@ -15,10 +15,10 @@ public class SubscribeIndexModel : PageModel
     }
 
     public List<Item> items;
-    KonaContext db;
+    KonaDB db;
     RatingFilterService filter;
 
-    public SubscribeIndexModel(KonaContext db, RatingFilterService filter)
+    public SubscribeIndexModel(KonaDB db, RatingFilterService filter)
     {
         this.db = db;
         this.filter = filter;

@@ -8,11 +8,11 @@ namespace Kona.Pages;
 
 public class UpdateTagsModel : PageModel
 {
-    private readonly KonaContext _context;
+    private readonly KonaDB db;
 
-    public UpdateTagsModel(Kona.KonaContext context)
+    public UpdateTagsModel(Kona.KonaDB db)
     {
-        _context = context;
+        this.db = db;
     }
     [BindProperty]
     public List<IFormFile> files { get; set; }
@@ -32,7 +32,7 @@ public class UpdateTagsModel : PageModel
                 var tags = JsonConvert.DeserializeObject<List<DataUtils.tag>>(json);
                 if (null == tags)
                     continue;
-                DataUtils.AddOrUpdateTags(tags, _context);
+                DataUtils.AddOrUpdateTags(tags, db);
             }
             catch (Exception e)
             {

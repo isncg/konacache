@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace kona.Migrations
 {
-    [DbContext(typeof(KonaContext))]
+    [DbContext(typeof(KonaDB))]
     partial class KonaContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

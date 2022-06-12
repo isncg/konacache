@@ -13,11 +13,11 @@ namespace kona.Pages.Posts
 {
     public class IndexModel : PageModel
     {
-        private readonly Kona.KonaContext _context;
+        private readonly Kona.KonaDB _context;
         private readonly IConfiguration _configuration;
         private readonly RatingFilterService _filter;
 
-        public IndexModel(Kona.KonaContext context, IConfiguration configuration, RatingFilterService filter)
+        public IndexModel(Kona.KonaDB context, IConfiguration configuration, RatingFilterService filter)
         {
             _context = context;
             _configuration = configuration;

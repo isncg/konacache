@@ -102,7 +102,7 @@ public class KonaUpdateService
     private void Process()
     {
         var scope = scopeFactory.CreateScope();
-        var context = scope.ServiceProvider.GetRequiredService<KonaContext>();
+        var context = scope.ServiceProvider.GetRequiredService<KonaDB>();
         processingList.Clear();
         processingList.AddRange(pendingList);
         pendingList.Clear();

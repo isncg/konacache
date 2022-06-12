@@ -75,7 +75,7 @@ public static class DataUtils
         }
     }
 
-    public static void AddOrUpdateTags(List<tag> jsonTags, KonaContext context)
+    public static void AddOrUpdateTags(List<tag> jsonTags, KonaDB context)
     {
         var tagList = jsonTags.ConvertAll(t => t.ToTag());
         var ids = context.Tags.Select(e => e.ID);
@@ -108,7 +108,7 @@ public static class DataUtils
         context.SaveChanges();
     }
 
-    public static void AddMissingRawTags(IEnumerable<string> tags, KonaContext context)
+    public static void AddMissingRawTags(IEnumerable<string> tags, KonaDB context)
     {
         var curRawTags = context.RawTags.Select(e => e.Name);
         List<RawTag> rawTagsToAdd = new List<RawTag>();
@@ -121,7 +121,7 @@ public static class DataUtils
         context.SaveChanges();
     }
 
-    public static void AddOrUpdatePost(post jsonPost, KonaContext context)
+    public static void AddOrUpdatePost(post jsonPost, KonaDB context)
     {
         var post = jsonPost.ToPost();
         var rawTagNames = (post.TagString?.Split(' ') ?? new string[0]).ToHashSet();

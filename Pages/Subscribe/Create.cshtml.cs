@@ -6,8 +6,8 @@ namespace Kona.Pages;
 
 public class SubscribeCreateMode : PageModel
 {
-    KonaContext db;
-    public SubscribeCreateMode(KonaContext db)
+    KonaDB db;
+    public SubscribeCreateMode(KonaDB db)
     {
         this.db = db;
     }

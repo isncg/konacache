@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace kona.Migrations
 {
-    [DbContext(typeof(KonaContext))]
+    [DbContext(typeof(KonaDB))]
     [Migration("20220511154127_RenameToName")]
     partial class RenameToName
     {

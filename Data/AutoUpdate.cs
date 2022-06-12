@@ -51,21 +51,26 @@ public class AutoUpdate
     }
     private void Process()
     {
+        int index = 0;
         while (true)
         {
             if (updateService.IsPendingEmpty)
             {
 
                 Console.WriteLine("Auto update start");
+                int rate = 11;
+                int H = index / rate;
+                int L = index % rate;
+                page = L == rate - 1 ? 1 : H * (rate - 1) + L + 1;
                 var updateTask = Update();
                 updateTask.Wait();
                 bool result = updateTask.Result;
-                if (page >= 1024)
-                    page = 1;
+                if (index >= 1024)
+                    index = 1;
                 Console.WriteLine($"Auto update finish, result = {result}");
                 if (result)
                 {
-                    page++;
+                    index++;
                 }
             }
             else

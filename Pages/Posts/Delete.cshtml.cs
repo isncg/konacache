@@ -12,9 +12,9 @@ namespace kona.Pages.Posts
 {
     public class DeleteModel : PageModel
     {
-        private readonly Kona.KonaContext _context;
+        private readonly Kona.KonaDB _context;
 
-        public DeleteModel(Kona.KonaContext context)
+        public DeleteModel(Kona.KonaDB context)
         {
             _context = context;
         }

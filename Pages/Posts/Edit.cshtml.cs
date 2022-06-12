@@ -13,9 +13,9 @@ namespace kona.Pages.Posts
 {
     public class EditModel : PageModel
     {
-        private readonly Kona.KonaContext _context;
+        private readonly Kona.KonaDB _context;
 
-        public EditModel(Kona.KonaContext context)
+        public EditModel(Kona.KonaDB context)
         {
             _context = context;
         }

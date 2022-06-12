@@ -12,9 +12,9 @@ namespace kona.Pages.Posts
 {
     public class CreateModel : PageModel
     {
-        private readonly Kona.KonaContext _context;
+        private readonly Kona.KonaDB _context;
 
-        public CreateModel(Kona.KonaContext context)
+        public CreateModel(Kona.KonaDB context)
         {
             _context = context;
         }
